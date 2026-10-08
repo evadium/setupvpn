@@ -224,7 +224,7 @@ main() {
         web_args+=(-f)
     fi
 
-    run_remote_module "setup-web.sh" "${web_args[@]}"
+    run_remote_module "web.sh" "${web_args[@]}"
 
     # Настройка Xray и генерация ссылок
     run_remote_module "xray.sh" -d "$DOMAIN_NAME"
