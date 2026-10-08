@@ -1,6 +1,9 @@
 #!/bin/bash
 set -Eeuo pipefail
 
+export LANG="C.UTF-8"
+export LC_ALL="C.UTF-8"
+
 REPO_URL="https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts"
 
 # Конфигурационные файлы
