@@ -21,7 +21,7 @@ curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/sc
 ### Использование
 Введите в терминал вашего сервера, заменяя "--ПАРАМЕТРЫ" на ваши предпочитаемые параметры:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/web.sh \| sudo bash -s -- --ПАРАМЕТРЫ
+curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/web.sh | sudo bash -s -- --ПАРАМЕТРЫ
 ```
 #### Параметры
 | Опция              |                Описание               |     Статус    | Пример                                                                                  |
