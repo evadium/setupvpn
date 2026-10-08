@@ -92,14 +92,14 @@ validate_inputs() {
     fi
 
     if [[ -z "$DOMAIN_NAME" ]]; then
-        read -rp "Введите доменное имя вашего сервера: " DOMAIN_NAME
+        read -rp "Введите домен: " DOMAIN_NAME </dev/tty
     fi
 
-    [[ -n "$DOMAIN_NAME" ]] || exit_on_error "Доменное имя не указано"
+    [[ -n "$DOMAIN_NAME" ]] || exit_on_error "Домен не указан"
 }
 
 check_environment() {
-    [[ $EUID -eq 0 ]] || exit_on_error "Запустите скрипт с правами root"
+    [[ $EUID -eq 0 ]] || exit_on_error "Запустите скрипт с правами root (sudo)"
 
     if [[ ! -f /etc/os-release ]]; then
         exit_on_error "Не удалось определить ОС"
