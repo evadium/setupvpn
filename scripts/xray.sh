@@ -308,10 +308,7 @@ generate_client_links() {
 
     umask 077
     cat > "$FILE_CLIENT_LINKS" <<EOF
-# Reality
 $link_reality
-
-# Резервные подключения через Nginx:
 $link_xhttp
 $link_grpc
 $link_ws
