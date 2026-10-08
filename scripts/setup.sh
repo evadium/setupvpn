@@ -216,7 +216,15 @@ main() {
     run_remote_module "warp.sh"
 
     # Настройка сайта, сертификата и Nginx
-    run_remote_module "web.sh" -d "$DOMAIN_NAME" ${CERTIFICATE_EMAIL:+-e "$CERTIFICATE_EMAIL"}
+    local web_args=(-d "$DOMAIN_NAME")
+    if [[ -n "$CERTIFICATE_EMAIL" ]]; then
+        web_args+=(-e "$CERTIFICATE_EMAIL")
+    fi
+    if [[ "$FORCE_DNS_CHECK" == true ]]; then
+        web_args+=(-f)
+    fi
+
+    run_remote_module "setup-web.sh" "${web_args[@]}"
 
     # Настройка Xray и генерация ссылок
     run_remote_module "xray.sh" -d "$DOMAIN_NAME"
