@@ -24,14 +24,14 @@ curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/sc
 curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/web.sh | sudo bash -s -- --ПАРАМЕТРЫ
 ```
 #### Параметры
-| Опция              |                Описание               |     Статус    | Пример                                                                                  |
-|--------------------|:-------------------------------------:|:-------------:|-----------------------------------------------------------------------------------------|
-| `--domain`, `-d`   | Доменное имя сервера                  | Обязательно   | `--domain example.com`                                                                  |
-| `--email`, `-e`    | Email для регистрации Let's Encrypt   | Необязательно | `--email example@example.com`                                                           |
-| `--repo-url`, `-r` | Базовая ссылка репозитория с модулями | Необязательно | `--repo-url https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts` |
-| `--force`, `-f`    | Пропустить проверку A-записи DNS      | Необязательно | `--force`                                                                               |
-| `--no-ufw`         | Не настраивать фаервол UFW            | Необязательно | `--no-ufw`                                                                              |
-| `--help, -h`       | Показать справку                      | Информация    | `--help`                                                                                |
+| Опция              |                  Описание                  |     Статус    | Пример                                                                                  |
+|--------------------|:------------------------------------------:|:-------------:|-----------------------------------------------------------------------------------------|
+| `--domain`, `-d`   | Доменное имя сервера                       | Обязательно   | `--domain example.com`                                                                  |
+| `--email`, `-e`    | Email для регистрации Let's Encrypt        | Необязательно | `--email example@example.com`                                                           |
+| `--repo-url`, `-r` | Базовая ссылка репозитория с модулями      | Необязательно | `--repo-url https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts` |
+| `--force`, `-f`    | Пропустить проверку A-записи DNS и Certbot | Необязательно | `--force`                                                                               |
+| `--no-ufw`         | Не настраивать фаервол UFW                 | Необязательно | `--no-ufw`                                                                              |
+| `--help, -h`       | Показать справку                           | Информация    | `--help`                                                                                |
 
 Скрипт также можно использовать по модулям:
 | Модуль |       Параметры       | Описание                                                                                    | Пример                                                                                                                                                             |
