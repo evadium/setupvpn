@@ -82,7 +82,7 @@ EOF
 }
 
 write_xray_config() {
-    [[ -f "$FILE_WARP_CREDS" ]] || exit_on_error "Файл $FILE_WARP_CREDS не найден. Сначала выполните setup-warp.sh"
+    [[ -f "$FILE_WARP_CREDS" ]] || exit_on_error "Файл $FILE_WARP_CREDS не найден. Сначала выполните warp.sh"
     # shellcheck disable=SC1090
     source "$FILE_WARP_CREDS"
 
