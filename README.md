@@ -6,7 +6,7 @@
 
 ## Быстрый старт
 ```bash
-# bash <(curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/setup.sh) --domain example.com
+curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/setup.sh | sudo bash
 ```
 
 ## Функции
@@ -19,9 +19,9 @@
 - Установка и настройка [UFW](https://packages.debian.org/stable/ufw)
 
 ### Использование
-Введите в терминал вашего сервера от имени root (sudo), заменяя "ПАРАМЕТРЫ" на ваши предпочитаемые параметры:
+Введите в терминал вашего сервера, заменяя "--ПАРАМЕТРЫ" на ваши предпочитаемые параметры:
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/setup.sh) ПАРАМЕТРЫ
+curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/web.sh \| sudo bash -s -- --ПАРАМЕТРЫ
 ```
 #### Параметры
 | Опция              |                Описание               |     Статус    | Пример                                                                                  |
@@ -34,11 +34,12 @@ bash <(curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/
 | `--help, -h`       | Показать справку                      | Информация    | `--help`                                                                                |
 
 Скрипт также можно использовать по модулям:
-| Модуль |       Параметры       | Описание                                                                                    | Пример                                                                                                                                                    |
-|--------|:---------------------:|---------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| warp   | -                     |                            Установка и настройка Cloudflare WARP                            | `# bash <(curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/warp.sh)`                                                 |
-| web    | `--domain`, `--email` | Установка и настройка Nginx и Certbot. Добавление пустого (шаблонного) сайта (для заглушки) | `# bash <(curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/web.sh) --domain example.com --email example@example.com` |
-| xray   | `--domain`            | Установка и настройка Xray, генерация VLESS конфигураций                                    | `# bash <(curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/xray.sh) --domain example.com`                            |
+| Модуль |       Параметры       | Описание                                                                                    | Пример                                                                                                                                                             |
+|--------|:---------------------:|---------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| warp   | -                     |                            Установка и настройка Cloudflare WARP                            | `curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/warp.sh \| sudo bash`                                                       |
+| web    | `--domain`, `--email` | Установка и настройка Nginx и Certbot. Добавление пустого (шаблонного) сайта (для заглушки) | `curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/web.sh \| sudo bash -s -- --domain example.com --email example@example.com` |
+| xray   | `--domain`            | Установка и настройка Xray, генерация VLESS конфигураций                                    | `curl -fsSL https://raw.githubusercontent.com/evadium/setupvpn/refs/heads/main/scripts/xray.sh \| sudo bash -s -- --domain example.com`                            |
 
-### Требования
+### Системные требования
 - Операционная система: Debian/Ubuntu
+- Пакет [curl](https://packages.debian.org/stable/curl)
