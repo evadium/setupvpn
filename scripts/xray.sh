@@ -81,10 +81,25 @@ EOF
     fi
 }
 
+format_warp_addresses_json() {
+    local raw_input="$1"
+    local cleaned
+    cleaned=$(echo "$raw_input" | tr -d '[]" \r\n')
+    echo "$cleaned" | awk -F',' '{
+        printf "["
+        for (i = 1; i <= NF; i++) {
+            if ($i != "") printf "%s\"%s\"", (i > 1 ? ", " : ""), $i
+        }
+        printf "]"
+    }'
+}
+
 write_xray_config() {
-    [[ -f "$FILE_WARP_CREDS" ]] || exit_on_error "Файл $FILE_WARP_CREDS не найден. Сначала выполните warp.sh"
-    # shellcheck disable=SC1090
+    [[ -f "$FILE_WARP_CREDS" ]] || exit_on_error "Файл $FILE_WARP_CREDS не найден. Сначала выполните setup-warp.sh"
     source "$FILE_WARP_CREDS"
+
+    local warp_addresses
+    warp_addresses=$(format_warp_addresses_json "${WARP_ADDRESSES_JSON:-}")
 
     log_info "Генерация конфигурации $FILE_XRAY_CONFIG"
     cat > "$FILE_XRAY_CONFIG" <<EOF
@@ -95,8 +110,8 @@ write_xray_config() {
   },
   "dns": {
     "servers": [
-      "https+local://1.1.1.1/dns-query",
-      "https+local://1.0.0.1/dns-query"
+      "https://1.1.1.1/dns-query",
+      "https://1.0.0.1/dns-query"
     ],
     "queryStrategy": "UseIPv4"
   },
@@ -230,7 +245,7 @@ write_xray_config() {
       "protocol": "wireguard",
       "settings": {
         "secretKey": "$WARP_PRIVATE_KEY",
-        "address": [$WARP_ADDRESSES_JSON],
+        "address": $warp_addresses,
         "peers": [{
           "publicKey": "$WARP_PUBLIC_KEY",
           "allowedIPs": ["0.0.0.0/0", "::/0"],
@@ -273,12 +288,15 @@ EOF
     chown "root:$(id -gn "$xray_user" 2>/dev/null || echo nogroup)" "$FILE_XRAY_CONFIG"
     chmod 640 "$FILE_XRAY_CONFIG"
 
-    xray run -test -config "$FILE_XRAY_CONFIG" >/dev/null || exit_on_error "Сгенерированный файл Xray содержит ошибки"
+    if ! xray run -test -config "$FILE_XRAY_CONFIG"; then
+        exit_on_error "Конфигурационный файл Xray содержит ошибки. Проверьте вывод выше."
+    fi
+
     systemctl enable xray >/dev/null 2>&1
     systemctl restart xray
     sleep 2
 
-    systemctl is-active --quiet xray || exit_on_error "Служба Xray не запустилась"
+    systemctl is-active --quiet xray || exit_on_error "Служба Xray не смогла запуститься (journalctl -u xray)"
 }
 
 generate_client_links() {
