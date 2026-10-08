@@ -20,6 +20,7 @@ FILE_SECURE_CONF="/etc/nginx/conf.d/vhost-secure.conf"
 
 DOMAIN_NAME=""
 CERTIFICATE_EMAIL=""
+FLAG_FORCE_MODE=false
 
 log_info() {
     printf '\n\033[1;34m[NGINX-SETUP]\033[0m %s\n' "$*"
@@ -49,8 +50,12 @@ parse_arguments() {
                 CERTIFICATE_EMAIL="$2"
                 shift 2
                 ;;
+            -f|--force)
+                FLAG_FORCE_MODE=true
+                shift
+                ;;
             -h|--help)
-                echo "Использование: $0 -d <домен> [-e <email>]"
+                echo "Использование: $0 -d <домен> [-e <email>] [-f|--force]"
                 exit 0
                 ;;
             *)
@@ -250,14 +255,31 @@ EOF
     systemctl restart nginx
 }
 
-issue_letsencrypt_certificate() {
+issue_or_generate_certificate() {
     local cert_dir="/etc/letsencrypt/live/$DOMAIN_NAME"
-    if [[ -f "$cert_dir/fullchain.pem" && -f "$cert_dir/privkey.pem" ]]; then
-        log_info "Сертификат Let's Encrypt уже существует"
+    local fullchain="$cert_dir/fullchain.pem"
+    local privkey="$cert_dir/privkey.pem"
+
+    if [[ -f "$fullchain" && -f "$privkey" ]]; then
+        log_info "Сертификат для $DOMAIN_NAME уже существует"
         return 0
     fi
 
-    log_info "Получение SSL-сертификата Let's Encrypt"
+    if [[ "$FLAG_FORCE_MODE" == true ]]; then
+        log_info "Создаётся самоподписанный сертификат"
+        mkdir -p "$cert_dir"
+
+        openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
+            -keyout "$privkey" \
+            -out "$fullchain" \
+            -subj "/CN=$DOMAIN_NAME" \
+            -addext "subjectAltName=DNS:$DOMAIN_NAME" >/dev/null 2>&1
+
+        log_success "Самоподписанный SSL-сертификат успешно создан для $DOMAIN_NAME"
+        return 0
+    fi
+
+    log_info "Получение настоящего SSL-сертификата Let's Encrypt"
     local certbot_args=()
     if [[ -n "$CERTIFICATE_EMAIL" ]]; then
         certbot_args=(-m "$CERTIFICATE_EMAIL")
@@ -284,7 +306,6 @@ EOF
 setup_internal_secure_vhost() {
     log_info "Конфигурация внутреннего SSL-хоста на 127.0.0.1:$PORT_INTERNAL_TLS"
 
-    # Определение поддержки синтаксиса HTTP/2 в текущей версии Nginx
     local listen_http2_line
     local http2_separate_directive=""
 
@@ -384,7 +405,7 @@ main() {
     optimize_main_nginx_conf
     deploy_stub_website
     setup_acme_http_vhost
-    issue_letsencrypt_certificate
+    issue_or_generate_certificate
     setup_internal_secure_vhost
     log_info "Модуль Web и Nginx настроен успешно"
 }
