@@ -81,10 +81,22 @@ EOF
     cd /
 }
 
+format_warp_addresses_json() {
+    local raw_input="$1"
+    local cleaned
+    cleaned=$(echo "$raw_input" | tr -d '[]" \r\n')
+    echo "$cleaned" | awk -F',' '{
+        printf "["
+        for (i = 1; i <= NF; i++) {
+            if ($i != "") printf "%s\"%s\"", (i > 1 ? ", " : ""), $i
+        }
+        printf "]"
+    }'
+}
+
 verify_warp_egress() {
     source "$FILE_WARP_CREDS"
 
-    # Если xray ещё не установлен, тест пропускается (будет проверен позже)
     if ! command -v xray >/dev/null 2>&1; then
         log_info "Xray пока не установлен, тест выхода WARP отложен"
         return 0
@@ -93,6 +105,8 @@ verify_warp_egress() {
     log_info "Тестирование подключения через WARP"
     local temp_config="/tmp/xray-warp-test.json"
     local temp_log="/tmp/xray-warp-test.log"
+    local warp_addresses
+    warp_addresses=$(format_warp_addresses_json "${WARP_ADDRESSES_JSON:-}")
 
     cat > "$temp_config" <<EOF
 {
@@ -103,7 +117,7 @@ verify_warp_egress() {
     "protocol": "wireguard",
     "settings": {
       "secretKey": "$WARP_PRIVATE_KEY",
-      "address": [$WARP_ADDRESSES_JSON],
+      "address": $warp_addresses,
       "peers": [{
         "publicKey": "$WARP_PUBLIC_KEY",
         "allowedIPs": ["0.0.0.0/0", "::/0"],
